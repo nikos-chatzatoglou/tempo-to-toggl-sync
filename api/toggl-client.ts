@@ -43,7 +43,6 @@ export interface TogglClientConfig {
 
 /**
  * Toggl API Client
- * All API interactions are encapsulated in this class for easy testing and mocking
  */
 export class TogglClient {
   private readonly apiToken: string;

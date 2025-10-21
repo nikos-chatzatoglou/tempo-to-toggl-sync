@@ -31,10 +31,7 @@ async function main() {
     const config = loadConfig();
     console.log("✓ Configuration loaded");
     console.log(`  Workspace ID: ${config.togglWorkspaceId} (type: ${typeof config.togglWorkspaceId})`);
-    if (config.togglProjectId) {
-      console.log(`  Project ID: ${config.togglProjectId}`);
-    }
-    console.log();
+
 
     // Initialize API clients
     console.log("🔧 Initializing API clients...");

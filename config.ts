@@ -1,6 +1,5 @@
 /**
  * Configuration management for the time management sync application
- * Centralizes environment variable access and validation
  */
 
 export interface AppConfig {
@@ -19,7 +18,6 @@ export function loadConfig(): AppConfig {
   const tempoToken = Deno.env.get("TEMPO_TOKEN");
   const workspaceId = Deno.env.get("TOGGL_WORKSPACE_ID");
   const projectId = Deno.env.get("TOGGL_PROJECT_ID");
-console.log(togglToken, tempoToken, workspaceId, projectId);
   if (!togglToken) {
     throw new Error("Missing required environment variable: TOGGL_TOKEN");
   }

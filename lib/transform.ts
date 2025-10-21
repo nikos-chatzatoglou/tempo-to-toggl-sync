@@ -1,6 +1,5 @@
 /**
  * Pure transformation functions for converting between Tempo and Toggl formats
- * No side effects, fully testable
  */
 
 import { TempoWorklog, TogglTimeEntryPayload, TempoToTogglConfig } from "../types.ts";

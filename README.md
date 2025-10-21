@@ -3,7 +3,6 @@
 A small aplication in Deno, that saves you a lot of time! 
 You can you use this, if you want to post entries from tempo to toggl. 
 
-SUPER usefull for denovo guys working for Ringana!
 
 ## 🏗️ Architecture
 

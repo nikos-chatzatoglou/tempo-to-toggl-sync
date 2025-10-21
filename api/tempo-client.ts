@@ -21,7 +21,6 @@ export interface TempoClientConfig {
 
 /**
  * Tempo API Client
- * All API interactions are encapsulated in this class for easy testing and mocking
  */
 export class TempoClient {
   private readonly apiToken: string;

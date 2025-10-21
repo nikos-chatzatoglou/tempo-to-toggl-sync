@@ -1,6 +1,5 @@
 /**
  * Pure deduplication logic for filtering out existing entries
- * No side effects, fully testable
  */
 
 import { TogglTimeEntryPayload } from "../types.ts";
@@ -26,7 +25,6 @@ export function normalizeTimestamp(timestamp: string): string {
 
 /**
  * Filters out entries that already exist based on start time
- * Pure function with no side effects
  * 
  * @param newEntries - Entries to be checked
  * @param existingEntries - Entries that already exist (only needs start field)
