@@ -16,7 +16,7 @@ export async function promptForDate(message: string): Promise<string> {
   // Read from stdin
   const buf = new Uint8Array(1024);
   const n = await Deno.stdin.read(buf);
-  
+
   if (n === null) {
     throw new Error("Failed to read input");
   }
@@ -46,7 +46,7 @@ export function isValidDate(date: string): boolean {
   }
 
   const parsedDate = new Date(date + "T00:00:00");
-  
+
   // Check if date is valid by comparing the parsed components
   const [year, month, day] = date.split("-").map(Number);
   return (
@@ -65,7 +65,7 @@ export function isDateInFuture(date: string): boolean {
   const inputDate = new Date(date + "T00:00:00");
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   return inputDate > today;
 }
 
@@ -79,7 +79,7 @@ export function isDateInFuture(date: string): boolean {
 export function isValidDateRange(startDate: string, endDate: string): boolean {
   const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T00:00:00");
-  
+
   // Toggl API returns empty array if start_date === end_date
   // So we require end_date to be strictly after start_date
   return start < end;
@@ -93,13 +93,15 @@ export function isValidDateRange(startDate: string, endDate: string): boolean {
  */
 export async function promptForValidDate(
   message: string,
-  allowFuture = false
+  allowFuture = false,
 ): Promise<string> {
   while (true) {
     const date = await promptForDate(message);
 
     if (!isValidDateFormat(date)) {
-      console.log("❌ Invalid format. Please use YYYY-MM-DD (e.g., 2025-10-20)");
+      console.log(
+        "❌ Invalid format. Please use YYYY-MM-DD (e.g., 2025-10-20)",
+      );
       continue;
     }
 
@@ -109,7 +111,9 @@ export async function promptForValidDate(
     }
 
     if (!allowFuture && isDateInFuture(date)) {
-      console.log("❌ Date cannot be in the future. Please enter today or a past date");
+      console.log(
+        "❌ Date cannot be in the future. Please enter today or a past date",
+      );
       continue;
     }
 
@@ -126,17 +130,25 @@ export async function promptForDateRange(): Promise<{
   startDate: string;
   endDate: string;
 }> {
-  console.log("ℹ️  Note: End date must be at least 1 day after start date (Toggl API limitation)\n");
-  
-  const startDate = await promptForValidDate("📅 Enter start date (YYYY-MM-DD): ");
+  console.log(
+    "ℹ️  Note: End date must be at least 1 day after start date (Toggl API limitation)\n",
+  );
+
+  const startDate = await promptForValidDate(
+    "📅 Enter start date (YYYY-MM-DD): ",
+  );
 
   while (true) {
-    const endDate = await promptForValidDate("📅 Enter end date (YYYY-MM-DD): ");
+    const endDate = await promptForValidDate(
+      "📅 Enter end date (YYYY-MM-DD): ",
+    );
 
     if (startDate === endDate) {
       console.log("❌ End date must be different from start date");
       console.log("   (Toggl API returns empty results when dates are equal)");
-      console.log("   💡 Tip: Use at least a 2-day range, e.g., if start is 2025-10-01, end should be 2025-10-02 or later");
+      console.log(
+        "   💡 Tip: Use at least a 2-day range, e.g., if start is 2025-10-01, end should be 2025-10-02 or later",
+      );
       continue;
     }
 
@@ -149,4 +161,3 @@ export async function promptForDateRange(): Promise<{
     return { startDate, endDate };
   }
 }
-

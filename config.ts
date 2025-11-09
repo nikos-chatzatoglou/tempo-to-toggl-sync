@@ -7,6 +7,8 @@ export interface AppConfig {
   tempoToken: string;
   togglWorkspaceId: number;
   togglProjectId?: number;
+  jiraEmail: string;
+  jiraApiToken: string;
 }
 
 /**
@@ -18,6 +20,8 @@ export function loadConfig(): AppConfig {
   const tempoToken = Deno.env.get("TEMPO_TOKEN");
   const workspaceId = Deno.env.get("TOGGL_WORKSPACE_ID");
   const projectId = Deno.env.get("TOGGL_PROJECT_ID");
+  const jiraEmail = Deno.env.get("JIRA_EMAIL");
+  const jiraApiToken = Deno.env.get("JIRA_API_TOKEN");
   if (!togglToken) {
     throw new Error("Missing required environment variable: TOGGL_TOKEN");
   }
@@ -27,14 +31,25 @@ export function loadConfig(): AppConfig {
   }
 
   if (!workspaceId) {
-    throw new Error("Missing required environment variable: TOGGL_WORKSPACE_ID");
+    throw new Error(
+      "Missing required environment variable: TOGGL_WORKSPACE_ID",
+    );
+  }
+
+  if (!jiraEmail) {
+    throw new Error("Missing required environment variable: JIRA_EMAIL");
+  }
+
+  if (!jiraApiToken) {
+    throw new Error("Missing required environment variable: JIRA_API_TOKEN");
   }
 
   return {
     togglToken,
     tempoToken,
+    jiraEmail,
+    jiraApiToken,
     togglWorkspaceId: parseInt(workspaceId, 10),
     togglProjectId: projectId ? parseInt(projectId, 10) : undefined,
   };
 }
-

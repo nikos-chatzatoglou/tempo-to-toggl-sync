@@ -45,36 +45,58 @@ export class SyncService {
       // Step 1: Fetch Tempo worklogs
       const tempoWorklogs = await this.config.tempoClient.fetchWorklogs(
         fromDate,
-        toDate
+        toDate,
       );
 
-      // Step 2: Fetch existing Toggl entries
+      // Step 2: Enrich worklogs with Jira issue details (key and summary)
+      const enrichedWorklogs = await this.config.tempoClient
+        .enrichWorklogsWithIssueDetails(
+          tempoWorklogs,
+        );
+
+      // Step 3: Fetch existing Toggl entries
       const togglEntries = await this.config.togglClient.fetchTimeEntries(
         fromDate,
-        toDate
+        toDate,
       );
 
-      // Step 3: Transform Tempo worklogs to Toggl format
+      // Step 4: Transform Tempo worklogs to Toggl format
       const transformedEntries = transformTempoWorklogsToToggl(
-        tempoWorklogs,
-        this.config.transformConfig
+        enrichedWorklogs,
+        this.config.transformConfig,
       );
 
-      // Step 4: Filter out duplicates
+      // Step 5: Filter out duplicates
       const deduplicationResult = filterDuplicateEntries(
         transformedEntries,
-        togglEntries
+        togglEntries,
       );
 
-      // Step 5: Create new entries in Toggl
+      // Log what would be posted to Toggl
+      console.log("\n📤 Entries ready to post to Toggl:");
+      console.log("═".repeat(50));
+      deduplicationResult.uniqueEntries.forEach((entry, index) => {
+        console.log(`${index + 1}. ${entry.description}`);
+        console.log(
+          `   Start: ${entry.start}, Duration: ${entry.duration}s, Billable: ${entry.billable}`,
+        );
+      });
+      console.log("═".repeat(50));
+      console.log(
+        `\n⚠️  Returning early - not posting to Toggl (remove this return to enable posting)\n`,
+      );
+
+      // Step 6: Create new entries in Toggl
       const createResult = await this.config.togglClient.createTimeEntries(
-        deduplicationResult.uniqueEntries
+        deduplicationResult.uniqueEntries,
       );
 
       // Collect any errors
       if (createResult.failed.length > 0) {
         errors.push(
-          ...createResult.failed.map((f) => `Failed to create entry: ${f.error}`)
+          ...createResult.failed.map((f) =>
+            `Failed to create entry: ${f.error}`
+          ),
         );
       }
 
@@ -89,7 +111,7 @@ export class SyncService {
       };
     } catch (error) {
       errors.push(
-        error instanceof Error ? error.message : "Unknown error occurred"
+        error instanceof Error ? error.message : "Unknown error occurred",
       );
 
       return {
@@ -104,4 +126,3 @@ export class SyncService {
     }
   }
 }
-

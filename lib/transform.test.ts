@@ -5,7 +5,7 @@
 
 import { assertEquals } from "jsr:@std/assert";
 import { transformTempoWorklogToToggl } from "./transform.ts";
-import { TempoWorklog, TempoToTogglConfig } from "../types.ts";
+import { TempoToTogglConfig, TempoWorklog } from "../types.ts";
 
 Deno.test("transformTempoWorklogToToggl - basic transformation", () => {
   // Arrange
@@ -52,7 +52,7 @@ Deno.test("transformTempoWorklogToToggl - basic transformation", () => {
   assertEquals(result.created_with, "test-suite");
   assertEquals(
     result.description,
-    "https://jira.example.com/issue/PROJ-123 | Working on feature"
+    "https://jira.example.com/issue/PROJ-123 | Working on feature",
   );
 });
 
@@ -95,4 +95,3 @@ Deno.test("transformTempoWorklogToToggl - non-billable entry", () => {
   assertEquals(result.billable, false);
   assertEquals(result.project_id, undefined);
 });
-

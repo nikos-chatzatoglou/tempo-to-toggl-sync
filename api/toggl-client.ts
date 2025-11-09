@@ -68,9 +68,10 @@ export class TogglClient {
    */
   async fetchTimeEntries(
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<TogglTimeEntry[]> {
-    const url = `${this.baseUrl}/me/time_entries?start_date=${startDate}&end_date=${endDate}`;
+    const url =
+      `${this.baseUrl}/me/time_entries?start_date=${startDate}&end_date=${endDate}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -83,7 +84,7 @@ export class TogglClient {
     if (!response.ok) {
       const errorBody = await response.text();
       throw new Error(
-        `Failed to fetch Toggl time entries: ${response.status} ${response.statusText} - ${errorBody}`
+        `Failed to fetch Toggl time entries: ${response.status} ${response.statusText} - ${errorBody}`,
       );
     }
 
@@ -115,7 +116,7 @@ export class TogglClient {
       console.error(`  ❌ Response: ${response.status} ${response.statusText}`);
       console.error(`  ❌ Body: ${errorBody}`);
       throw new Error(
-        `Failed to create time entry: ${response.status} ${response.statusText} - ${errorBody}`
+        `Failed to create time entry: ${response.status} ${response.statusText} - ${errorBody}`,
       );
     }
 
@@ -129,7 +130,7 @@ export class TogglClient {
    * @returns Result with successful and failed entries
    */
   async createTimeEntries(
-    entries: TogglTimeEntryPayload[]
+    entries: TogglTimeEntryPayload[],
   ): Promise<CreateEntriesResult> {
     const result: CreateEntriesResult = {
       success: [],
@@ -155,4 +156,3 @@ export class TogglClient {
     return result;
   }
 }
-

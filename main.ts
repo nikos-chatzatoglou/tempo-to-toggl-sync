@@ -30,12 +30,18 @@ async function main() {
     console.log("⚙️  Loading configuration...");
     const config = loadConfig();
     console.log("✓ Configuration loaded");
-    console.log(`  Workspace ID: ${config.togglWorkspaceId} (type: ${typeof config.togglWorkspaceId})`);
-
+    console.log(
+      `  Workspace ID: ${config.togglWorkspaceId} (type: ${typeof config
+        .togglWorkspaceId})`,
+    );
 
     // Initialize API clients
     console.log("🔧 Initializing API clients...");
-    const tempoClient = new TempoClient({ apiToken: config.tempoToken });
+    const tempoClient = new TempoClient({
+      apiToken: config.tempoToken,
+      jiraEmail: config.jiraEmail,
+      jiraApiToken: config.jiraApiToken,
+    });
     const togglClient = new TogglClient({ apiToken: config.togglToken });
     console.log("✓ API clients ready\n");
 
@@ -50,14 +56,13 @@ async function main() {
       },
     });
 
- 
     // Execute synchronization with progress messages
     console.log("🔍 Fetching Tempo worklogs...");
     const result = await syncService.syncTimeEntries(fromDate, toDate);
-    
+
     console.log(`✓ Found ${result.tempoEntriesFetched} Tempo entries`);
     console.log(`✓ Found ${result.togglEntriesFetched} existing Toggl entries`);
-    
+
     if (result.uniqueEntries > 0) {
       console.log(`\n⚡ Processing ${result.uniqueEntries} unique entries...`);
       console.log(`🔎 Skipped ${result.duplicatesSkipped} duplicate(s)`);
@@ -81,14 +86,21 @@ async function main() {
     }
 
     if (result.successfullyCreated > 0) {
-      console.log(`\n🎊 Successfully synced ${result.successfullyCreated} entries! 🎉`);
+      console.log(
+        `\n🎊 Successfully synced ${result.successfullyCreated} entries! 🎉`,
+      );
     } else if (result.duplicatesSkipped > 0) {
-      console.log("\n✓ All entries already exist in Toggl. Nothing to sync. 👍");
+      console.log(
+        "\n✓ All entries already exist in Toggl. Nothing to sync. 👍",
+      );
     } else {
       console.log("\n⚠️  No entries found to sync.");
     }
   } catch (error) {
-    console.error("\n❌ Fatal error:", error instanceof Error ? error.message : error);
+    console.error(
+      "\n❌ Fatal error:",
+      error instanceof Error ? error.message : error,
+    );
     Deno.exit(1);
   }
 }
@@ -97,4 +109,3 @@ async function main() {
 if (import.meta.main) {
   await main();
 }
-

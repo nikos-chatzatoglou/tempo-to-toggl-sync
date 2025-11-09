@@ -2,7 +2,11 @@
  * Pure transformation functions for converting between Tempo and Toggl formats
  */
 
-import { TempoWorklog, TogglTimeEntryPayload, TempoToTogglConfig } from "../types.ts";
+import {
+  TempoToTogglConfig,
+  TempoWorklog,
+  TogglTimeEntryPayload,
+} from "../types.ts";
 
 /**
  * Transforms a single Tempo worklog into a Toggl time entry payload
@@ -12,14 +16,19 @@ import { TempoWorklog, TogglTimeEntryPayload, TempoToTogglConfig } from "../type
  */
 export function transformTempoWorklogToToggl(
   worklog: TempoWorklog,
-  config: TempoToTogglConfig
+  config: TempoToTogglConfig,
 ): TogglTimeEntryPayload {
   const billable = worklog.billableSeconds > 0;
-  
-  // Build description with Jira ticket information if available
-  const description = worklog.issue?.self
-    ? `${worklog.issue.self} | ${worklog.description || ""}`
-    : worklog.description || "";
+
+  let description = "";
+  if (worklog.issue?.key) {
+    description = `${worklog.issue.key}: ${worklog.description || ""}`;
+  } else if (worklog.issue?.self) {
+    description = `${worklog.issue.self} | ${worklog.description || ""}`;
+  } else {
+    // No issue information available
+    description = worklog.description || "";
+  }
 
   const payload: TogglTimeEntryPayload = {
     workspace_id: config.workspace_id,
@@ -45,8 +54,9 @@ export function transformTempoWorklogToToggl(
  */
 export function transformTempoWorklogsToToggl(
   worklogs: TempoWorklog[],
-  config: TempoToTogglConfig
+  config: TempoToTogglConfig,
 ): TogglTimeEntryPayload[] {
-  return worklogs.map((worklog) => transformTempoWorklogToToggl(worklog, config));
+  return worklogs.map((worklog) =>
+    transformTempoWorklogToToggl(worklog, config)
+  );
 }
-

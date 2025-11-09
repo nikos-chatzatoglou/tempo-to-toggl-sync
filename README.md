@@ -1,8 +1,7 @@
 # Tempo to Toggl Time Entry Sync
 
-A small aplication in Deno, that saves you a lot of time! 
-You can you use this, if you want to post entries from tempo to toggl. 
-
+A small aplication in Deno, that saves you a lot of time! You can you use this,
+if you want to post entries from tempo to toggl.
 
 ## 🏗️ Architecture
 
@@ -23,7 +22,6 @@ You can you use this, if you want to post entries from tempo to toggl.
 └── main.ts               # Application entry point
 ```
 
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -41,13 +39,14 @@ TEMPO_TOKEN=your_tempo_token_here
 TOGGL_TOKEN=your_toggl_token_here
 TOGGL_WORKSPACE_ID=your_workspace_id
 TOGGL_PROJECT_ID=your_project_id  # Optional
+JIRA_EMAIL=your_jira_email
+JIRA_API_TOKEN=your_jira_api_token
 ```
 
 2. Run the sync:
 
 ```bash
 deno task start
-
 ```
 
 3. Enter dates when prompted:
@@ -91,7 +90,11 @@ import { SyncService } from "./services/sync-service.ts";
 await load({ export: true });
 
 const config = loadConfig();
-const tempoClient = new TempoClient({ apiToken: config.tempoToken });
+const tempoClient = new TempoClient({
+  apiToken: config.tempoToken,
+  jiraEmail: config.jiraEmail,
+  jiraApiToken: config.jiraApiToken,
+});
 const togglClient = new TogglClient({ apiToken: config.togglToken });
 
 const syncService = new SyncService({
@@ -112,7 +115,11 @@ console.log(result);
 
 ```typescript
 // Fetch data
-const tempoClient = new TempoClient({ apiToken: "..." });
+const tempoClient = new TempoClient({
+  apiToken: "...",
+  jiraEmail: "...",  
+  jiraApiToken: "...",  
+});
 const worklogs = await tempoClient.fetchWorklogs("2025-10-01", "2025-10-01");
 
 // Transform data
@@ -155,11 +162,11 @@ import { assertEquals } from "jsr:@std/assert";
 import { transformTempoWorklogToToggl } from "./lib/transform.ts";
 
 Deno.test("transformation creates correct payload", () => {
-  const worklog = { /* ... */ };
+  const worklog = {/* ... */};
   const config = { workspace_id: 123, created_with: "test" };
-  
+
   const result = transformTempoWorklogToToggl(worklog, config);
-  
+
   assertEquals(result.workspace_id, 123);
   assertEquals(result.billable, true);
 });
@@ -184,20 +191,22 @@ The sync service returns detailed statistics:
 
 ```typescript
 interface SyncResult {
-  tempoEntriesFetched: number;      // Total entries from Tempo
-  togglEntriesFetched: number;      // Total existing entries in Toggl
-  uniqueEntries: number;            // New entries to sync
-  duplicatesSkipped: number;        // Entries already in Toggl
-  successfullyCreated: number;      // Successfully synced
-  failedToCreate: number;           // Failed to sync
-  errors: string[];                 // Error messages
+  tempoEntriesFetched: number; // Total entries from Tempo
+  togglEntriesFetched: number; // Total existing entries in Toggl
+  uniqueEntries: number; // New entries to sync
+  duplicatesSkipped: number; // Entries already in Toggl
+  successfullyCreated: number; // Successfully synced
+  failedToCreate: number; // Failed to sync
+  errors: string[]; // Error messages
 }
 ```
 
 ## 🎯 Features
 
-- ✅ **Date Validation**: Validates format, prevents future dates, ensures valid ranges
-- ✅ **Duplicate Detection**: Automatically skips entries that already exist in Toggl
+- ✅ **Date Validation**: Validates format, prevents future dates, ensures valid
+  ranges
+- ✅ **Duplicate Detection**: Automatically skips entries that already exist in
+  Toggl
 - ✅ **Batch Processing**: Syncs multiple entries in one operation
 - ✅ **Error Handling**: Continues processing even if individual entries fail
 - ✅ **Billable Status**: Preserves billable status from Tempo
@@ -216,18 +225,25 @@ interface SyncResult {
 ## 🐛 Troubleshooting
 
 ### "Missing environment variable" error
+
 Ensure your `.env` file exists and contains all required variables.
 
 ### "Failed to fetch" errors
+
 Check your API tokens are valid and not expired.
 
 ### Getting empty results even though Tempo has data
-**Important:** The Toggl API has a limitation - it returns an empty array when `start_date` equals `end_date`. The application prevents this by requiring the end date to be at least 1 day after the start date. Always use a minimum 2-day range (e.g., 2025-10-01 to 2025-10-02).
+
+**Important:** The Toggl API has a limitation - it returns an empty array when
+`start_date` equals `end_date`. The application prevents this by requiring the
+end date to be at least 1 day after the start date. Always use a minimum 2-day
+range (e.g., 2025-10-01 to 2025-10-02).
 
 ### All entries showing as duplicates
-The deduplication is based on start time. If you need to re-sync, delete the entries from Toggl first.
+
+The deduplication is based on start time. If you need to re-sync, delete the
+entries from Toggl first.
 
 ## 📄 License
 
 MIT
-

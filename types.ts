@@ -25,6 +25,8 @@ export interface TempoWorklog {
 export interface Issue {
   self: string;
   id: number;
+  key?: string; // Jira issue key (e.g., "WEB-6546")
+  summary?: string; // Jira issue summary/description
 }
 
 export interface Author {
@@ -62,4 +64,3 @@ export interface TempoToTogglConfig {
   project_id?: number;
   created_with: string;
 }
-  
