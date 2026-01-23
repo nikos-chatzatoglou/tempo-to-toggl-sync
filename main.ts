@@ -52,6 +52,7 @@ async function main() {
       transformConfig: {
         workspace_id: config.togglWorkspaceId,
         project_id: config.togglProjectId,
+        task_id: config.togglTaskId,
         created_with: "tempo-to-toggl-sync",
       },
     });

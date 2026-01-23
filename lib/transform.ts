@@ -32,6 +32,7 @@ export function transformTempoWorklogToToggl(
 
   const payload: TogglTimeEntryPayload = {
     workspace_id: config.workspace_id,
+    task_id: config.task_id,
     billable,
     start: worklog.startDateTimeUtc,
     duration: worklog.timeSpentSeconds,

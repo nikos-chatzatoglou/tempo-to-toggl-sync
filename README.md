@@ -39,6 +39,7 @@ TEMPO_TOKEN=your_tempo_token_here
 TOGGL_TOKEN=your_toggl_token_here
 TOGGL_WORKSPACE_ID=your_workspace_id
 TOGGL_PROJECT_ID=your_project_id  # Optional
+TOGGL_TASK_ID=your_task_id  # Required
 JIRA_EMAIL=your_jira_email
 JIRA_API_TOKEN=your_jira_api_token
 ```
@@ -103,6 +104,7 @@ const syncService = new SyncService({
   transformConfig: {
     workspace_id: config.togglWorkspaceId,
     project_id: config.togglProjectId,
+    task_id: config.togglTaskId,
     created_with: "tempo-to-toggl-sync",
   },
 });
@@ -182,8 +184,18 @@ export interface AppConfig {
   tempoToken: string;
   togglWorkspaceId: number;
   togglProjectId?: number;
+  togglTaskId: number;
+  jiraEmail: string;
+  jiraApiToken: string;
 }
 ```
+
+**Note about `TOGGL_TASK_ID`**: This is a required field. To find your task ID:
+1. Log into Toggl Track
+2. Navigate to your project
+3. Find or create a task
+4. Get the task ID from the API or inspect network requests
+5. Add it to your `.env` file
 
 ## 📊 Sync Results
 
@@ -243,6 +255,16 @@ range (e.g., 2025-10-01 to 2025-10-02).
 
 The deduplication is based on start time. If you need to re-sync, delete the
 entries from Toggl first.
+
+### "Missing required environment variable: TOGGL_TASK_ID" error
+
+The `TOGGL_TASK_ID` is required. To set it up:
+
+1. Log into Toggl Track
+2. Navigate to your project and find or create a task
+3. Get the task ID (check the URL or use browser dev tools to inspect API requests)
+4. Add `TOGGL_TASK_ID=your_task_id` to your `.env` file
+5. Restart the sync
 
 ## 📄 License
 

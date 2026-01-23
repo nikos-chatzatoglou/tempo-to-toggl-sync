@@ -46,6 +46,7 @@ export interface Attributes {
 export interface TogglTimeEntryPayload {
   workspace_id: number;
   project_id?: number;
+  task_id: number;
   billable: boolean;
   start: string; // Format: YYYY-MM-DDTHH:mm:ssZ (ISO 8601)
   stop?: string; // Format: YYYY-MM-DDTHH:mm:ssZ (optional when duration is provided)
@@ -62,5 +63,6 @@ export interface TogglTimeEntryPayload {
 export interface TempoToTogglConfig {
   workspace_id: number;
   project_id?: number;
+  task_id: number;
   created_with: string;
 }

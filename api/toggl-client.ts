@@ -100,7 +100,7 @@ export class TogglClient {
     const url = `${this.baseUrl}/workspaces/${entry.workspace_id}/time_entries`;
 
     console.log(`  📤 POST ${url}`);
-    console.log(`  📦 Workspace ID in payload: ${entry.workspace_id}`);
+    console.log(`  📦 Payload:`, JSON.stringify(entry, null, 2));
 
     const response = await fetch(url, {
       method: "POST",
@@ -115,6 +115,7 @@ export class TogglClient {
       const errorBody = await response.text();
       console.error(`  ❌ Response: ${response.status} ${response.statusText}`);
       console.error(`  ❌ Body: ${errorBody}`);
+      console.error(`  ❌ Sent payload:`, JSON.stringify(entry, null, 2));
       throw new Error(
         `Failed to create time entry: ${response.status} ${response.statusText} - ${errorBody}`,
       );
